@@ -10,7 +10,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -54,16 +53,6 @@ class TabbedBrowsingTest {
         }
     }
 
-    // changing the device preference for Touch and Hold delay, to avoid long-clicks instead of a single-click
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setDevicePreference() {
-            val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-            mDevice.executeShellCommand("settings put secure long_press_timeout 3000")
-        }
-    }
-
     @After
     fun tearDown() {
         mockWebServer.shutdown()
@@ -95,8 +84,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun openNewPrivateTabTest() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen { }.togglePrivateBrowsingMode()
@@ -160,7 +147,6 @@ class TabbedBrowsingTest {
         }.openNewTabAndEnterToBrowser(genericURL.url) {
         }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-            verifyCloseTabsButton("Test_Page_1")
             closeTabViaXButton("Test_Page_1")
             verifySnackBarText("Tab closed")
             snackBarButtonClick("UNDO")
@@ -191,8 +177,7 @@ class TabbedBrowsingTest {
         browserScreen {
         }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
-        }.openNewTab {
-        }.dismissSearchBar { }
+        }.closeTabDrawer { }
     }
 
     @Test
@@ -283,8 +268,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun verifyEmptyTabTray() {
-        homeScreen { }.dismissOnboarding()
-
         navigationToolbar {
         }.openTabTray {
             verifyNoTabsOpened()
@@ -299,8 +282,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun verifyOpenTabDetails() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -318,8 +299,6 @@ class TabbedBrowsingTest {
 
     @Test
     fun verifyContextMenuShortcuts() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
